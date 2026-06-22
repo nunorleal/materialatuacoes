@@ -1,0 +1,1358 @@
+<!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Material Atuações</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f3ee;
+      --paper: #fffdfa;
+      --ink: #23201d;
+      --muted: #6d6760;
+      --line: #ded5cb;
+      --accent: #176b68;
+      --accent-2: #e4774d;
+      --ok: #347a46;
+      --danger: #b43d38;
+      --shadow: 0 12px 34px rgba(44, 36, 28, .11);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(23, 107, 104, .09), transparent 38%),
+        linear-gradient(315deg, rgba(228, 119, 77, .11), transparent 34%),
+        var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 18px;
+      align-items: end;
+      padding: 18px 0 24px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 4.8rem);
+      line-height: .9;
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      color: var(--muted);
+      max-width: 720px;
+      font-size: 1rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 5px;
+      background: rgba(255, 253, 250, .78);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+      backdrop-filter: blur(14px);
+    }
+
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      color: var(--muted);
+      border-radius: 999px;
+      background: transparent;
+      white-space: nowrap;
+    }
+
+      .tab svg,
+      .icon svg,
+      .action svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+    }
+
+    .tab.active {
+      color: white;
+      background: var(--accent);
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+    }
+
+    section {
+      display: none;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .toolbar h2 {
+      margin: 0;
+      font-size: 1.55rem;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .field,
+    .search,
+    .file-label {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 250, .92);
+      border-radius: var(--radius);
+      color: var(--ink);
+      min-height: 42px;
+      padding: 9px 10px;
+      outline-color: var(--accent);
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .search input {
+      min-width: min(320px, 80vw);
+    }
+
+    .primary,
+    .secondary,
+    .danger,
+    .ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .secondary {
+      background: #f0e5d9;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .danger {
+      background: #f5d6d3;
+      color: var(--danger);
+      border: 1px solid #e7aba6;
+    }
+
+    .ghost {
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      padding-inline: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+    }
+
+    .item-card,
+    .gig-card,
+    .panel,
+    dialog {
+      background: rgba(255, 253, 250, .9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .item-card {
+      overflow: hidden;
+      display: grid;
+      min-height: 288px;
+      position: relative;
+    }
+
+    .photo {
+      height: 150px;
+      background: #ece3d8;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      overflow: hidden;
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo svg {
+      width: 54px;
+      height: 54px;
+      stroke: currentColor;
+      opacity: .65;
+    }
+
+    .item-body,
+    .gig-body {
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .item-title,
+    .gig-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .item-title h3,
+    .gig-title h3 {
+      margin: 0;
+      font-size: 1.02rem;
+      overflow-wrap: anywhere;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e5f1ee;
+      color: var(--accent);
+      font-size: .78rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .notes {
+      color: var(--muted);
+      margin: 0;
+      font-size: .9rem;
+      overflow-wrap: anywhere;
+    }
+
+    .card-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .item-menu {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 3;
+    }
+
+    .menu-toggle {
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      background: rgba(255, 253, 250, .92);
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(44, 36, 28, .14);
+    }
+
+    .menu-toggle svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .menu-popover {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      min-width: 148px;
+      padding: 6px;
+      display: none;
+      gap: 4px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .item-menu.open .menu-popover {
+      display: grid;
+    }
+
+    .menu-action {
+      width: 100%;
+      justify-content: flex-start;
+      min-height: 38px;
+      padding: 8px 10px;
+      background: transparent;
+      color: var(--ink);
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      text-align: left;
+    }
+
+    .menu-action:hover {
+      background: #f0e5d9;
+    }
+
+    .menu-action.danger-text {
+      color: var(--danger);
+    }
+
+    .menu-action svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(280px, .9fr) minmax(320px, 1.4fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 16px;
+    }
+
+    .panel h3 {
+      margin: 0 0 12px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .span-all {
+      grid-column: 1 / -1;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .thumb-preview {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #ece3d8;
+      object-fit: cover;
+    }
+
+    .item-picker,
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .pick-row,
+    .check-row {
+      display: grid;
+      grid-template-columns: auto 54px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .55);
+    }
+
+    .check-row {
+      grid-template-columns: auto 54px 1fr;
+    }
+
+    .pick-row input,
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      min-height: auto;
+      accent-color: var(--accent);
+    }
+
+    .mini-photo {
+      width: 54px;
+      height: 46px;
+      border-radius: 6px;
+      background: #ece3d8;
+      object-fit: cover;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      overflow: hidden;
+    }
+
+    .mini-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .row-name {
+      min-width: 0;
+    }
+
+    .row-name strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .row-name small {
+      color: var(--muted);
+    }
+
+    .empty {
+      padding: 28px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 253, 250, .56);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .gig-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .check-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .progress {
+      height: 12px;
+      background: #eadfd3;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .progress span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--ok));
+      transition: width .2s ease;
+    }
+
+    .packed .row-name strong,
+    .packed .row-name small {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    dialog {
+      border: 1px solid var(--line);
+      width: min(620px, calc(100vw - 28px));
+      padding: 0;
+    }
+
+    dialog::backdrop {
+      background: rgba(34, 30, 27, .42);
+    }
+
+    .dialog-inner {
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .dialog-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dialog-title h3 {
+      margin: 0;
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: #23201d;
+      color: white;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 820px) {
+      .app {
+        padding: 16px;
+      }
+
+      header {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        overflow-x: auto;
+        justify-content: start;
+        top: 8px;
+      }
+
+      .split {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .check-header {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .tab span {
+        display: none;
+      }
+
+      .tab {
+        padding: 11px 13px;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .controls,
+      .primary,
+      .secondary,
+      .danger {
+        width: 100%;
+      }
+
+      .pick-row,
+      .check-row {
+        grid-template-columns: auto 46px 1fr;
+      }
+
+      .pick-row .pill {
+        grid-column: 3;
+        justify-self: start;
+      }
+
+      .mini-photo {
+        width: 46px;
+        height: 42px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <h1>Material Atuações</h1>
+        <p class="subtitle">Inventário, modelos de atuação e checklist para sair da garagem com tudo marcado.</p>
+      </div>
+      <nav class="tabs" aria-label="Secções">
+        <button class="tab active" data-tab="today" title="Checklist"><span class="icon" data-icon="check-square"></span><span>Checklist</span></button>
+        <button class="tab" data-tab="inventory" title="Material"><span class="icon" data-icon="boxes"></span><span>Material</span></button>
+        <button class="tab" data-tab="gigs" title="Atuações"><span class="icon" data-icon="music"></span><span>Atuações</span></button>
+      </nav>
+      <div class="controls">
+        <button class="secondary" id="importData"><span class="icon" data-icon="upload"></span>Importar</button>
+        <button class="secondary" id="exportData"><span class="icon" data-icon="download"></span>Exportar</button>
+        <input id="importFile" type="file" accept="application/json,.json" hidden>
+      </div>
+    </header>
+
+    <main>
+      <section id="today" class="active" aria-labelledby="today-title">
+        <div class="toolbar">
+          <h2 id="today-title">Checklist do dia</h2>
+          <div class="controls">
+            <select id="todayGig"></select>
+            <button class="secondary" id="resetCheck"><span class="icon" data-icon="rotate"></span>Limpar vistos</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div id="todayContent"></div>
+        </div>
+      </section>
+
+      <section id="inventory" aria-labelledby="inventory-title">
+        <div class="toolbar">
+          <h2 id="inventory-title">Material</h2>
+          <div class="controls">
+            <div class="search">
+              <input id="itemSearch" type="search" placeholder="Procurar material">
+            </div>
+            <button class="primary" id="newItem"><span class="icon" data-icon="plus"></span>Novo material</button>
+          </div>
+        </div>
+        <div id="inventoryGrid" class="grid"></div>
+      </section>
+
+      <section id="gigs" aria-labelledby="gigs-title">
+        <div class="toolbar">
+          <h2 id="gigs-title">Tipos de atuação</h2>
+          <button class="primary" id="newGig"><span class="icon" data-icon="plus"></span>Nova atuação</button>
+        </div>
+        <div class="split">
+          <div class="panel">
+            <h3>Modelos</h3>
+            <div id="gigList" class="gig-grid"></div>
+          </div>
+          <div class="panel">
+            <h3 id="gigFormTitle">Criar atuação</h3>
+            <form id="gigForm" class="form-grid">
+              <input type="hidden" id="gigId">
+              <div class="field span-all">
+                <label for="gigName">Nome</label>
+                <input id="gigName" required placeholder="Ex: Kiay, Casamento, Bar">
+              </div>
+              <div class="field span-all">
+                <label for="gigNotes">Notas</label>
+                <textarea id="gigNotes" placeholder="Detalhes úteis: horários, setup habitual, extras..."></textarea>
+              </div>
+              <div class="field span-all">
+                <label>Material necessário</label>
+                <div id="gigItemPicker" class="item-picker"></div>
+              </div>
+              <div class="controls span-all">
+                <button class="primary" type="submit"><span class="icon" data-icon="save"></span>Guardar atuação</button>
+                <button class="secondary" type="button" id="cancelGig"><span class="icon" data-icon="x"></span>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="itemDialog">
+    <form method="dialog" class="dialog-inner" id="itemForm">
+      <div class="dialog-title">
+        <h3 id="itemFormTitle">Novo material</h3>
+        <button class="ghost" value="cancel" type="button" id="closeItem" title="Fechar"><span class="icon" data-icon="x"></span></button>
+      </div>
+      <input type="hidden" id="itemId">
+      <div class="form-grid">
+        <div class="field">
+          <label for="itemName">Nome</label>
+          <input id="itemName" required placeholder="Ex: Guitarra Taylor">
+        </div>
+        <div class="field">
+          <label for="itemCategory">Categoria</label>
+          <input id="itemCategory" list="categoryList" placeholder="Ex: Guitarras">
+          <datalist id="categoryList"></datalist>
+        </div>
+        <div class="field span-all">
+          <label for="itemNotes">Notas</label>
+          <textarea id="itemNotes" placeholder="Cabos, afinadores, estado, onde fica guardado..."></textarea>
+        </div>
+        <div class="field span-all">
+          <label for="itemPhoto">Foto</label>
+          <div class="file-row">
+            <img id="photoPreview" class="thumb-preview" alt="">
+            <input id="itemPhoto" type="file" accept="image/*">
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="primary" type="submit"><span class="icon" data-icon="save"></span>Guardar</button>
+        <button class="secondary" value="cancel" type="button" id="clearPhoto"><span class="icon" data-icon="image-off"></span>Sem foto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const icons = {
+      "check-square": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+      boxes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5l-5-3-4.03 1.92Z"/><path d="m7 16.5-4.74-2.85"/><path d="m7 16.5 5-3"/><path d="M7 16.5v5.17"/><path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 11l-5 2.5Z"/><path d="m17 16.5-5-3"/><path d="m17 16.5 4.74-2.85"/><path d="M17 16.5v5.17"/><path d="M7.97 4.42a2 2 0 0 0-.97 1.71v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0l3-1.8A2 2 0 0 0 17 9.37V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"/><path d="M12 8 7.26 5.15"/><path d="m12 8 4.74-2.85"/><path d="M12 13.17V8"/></svg>',
+      music: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+      plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14"/><path d="M12 5v14"/></svg>',
+      save: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>',
+      x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+      edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+      trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>',
+      image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>',
+      "image-off": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m2 2 20 20"/><path d="M10.5 10.5 21 21"/><path d="M14 5h5a2 2 0 0 1 2 2v9"/><path d="M3 3.5V19a2 2 0 0 0 2 2h15.5"/><path d="M9 9a2 2 0 0 0 2 2"/><path d="M3 15l4-4c.9-.9 2.1-.9 3 0l2 2"/></svg>',
+      rotate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 3v6h6"/></svg>',
+      download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>',
+      upload: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>',
+      more: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>'
+    };
+
+    const storeKey = "material-atuacoes-v1";
+    const checkKey = "material-atuacoes-checks-v1";
+    const exportVersion = 1;
+    const photoMaxSize = 720;
+    const photoQuality = 0.72;
+    const state = loadState();
+    let checklistState = JSON.parse(localStorage.getItem(checkKey) || "{}");
+    let pendingPhoto = "";
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+    function seedData() {
+      return {
+        items: [
+          { id: crypto.randomUUID(), name: "Guitarra principal", category: "Guitarras", notes: "Instrumento base para atuações acústicas.", photo: "" },
+          { id: crypto.randomUUID(), name: "Saco de cabos", category: "Sacos", notes: "XLR, jack, extensões e adaptadores.", photo: "" },
+          { id: crypto.randomUUID(), name: "Tripé de microfone", category: "Tripés", notes: "Confirmar aperto antes de sair.", photo: "" },
+          { id: crypto.randomUUID(), name: "Luz ambiente", category: "Luzes", notes: "Carregador na bolsa lateral.", photo: "" }
+        ],
+        gigs: []
+      };
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(storeKey);
+      if (!raw) return seedData();
+      try {
+        const parsed = JSON.parse(raw);
+        return {
+          items: Array.isArray(parsed.items) ? parsed.items : [],
+          gigs: Array.isArray(parsed.gigs) ? parsed.gigs : []
+        };
+      } catch {
+        return seedData();
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(storeKey, JSON.stringify(state));
+    }
+
+    function saveChecks() {
+      localStorage.setItem(checkKey, JSON.stringify(checklistState));
+    }
+
+    function makeExportData(items = state.items) {
+      return {
+        app: "material-atuacoes",
+        version: exportVersion,
+        exportedAt: new Date().toISOString(),
+        data: {
+          items,
+          gigs: state.gigs,
+          checklistState
+        }
+      };
+    }
+
+    function validateImportData(payload) {
+      const data = payload?.data || payload;
+      if (!data || !Array.isArray(data.items) || !Array.isArray(data.gigs)) {
+        throw new Error("Ficheiro JSON inválido.");
+      }
+      return {
+        items: data.items.map((item) => ({
+          id: String(item.id || crypto.randomUUID()),
+          name: String(item.name || "").trim(),
+          category: String(item.category || "").trim(),
+          notes: String(item.notes || "").trim(),
+          photo: typeof item.photo === "string" && item.photo.startsWith("data:image/") ? item.photo : ""
+        })).filter((item) => item.name),
+        gigs: data.gigs.map((gig) => ({
+          id: String(gig.id || crypto.randomUUID()),
+          name: String(gig.name || "").trim(),
+          notes: String(gig.notes || "").trim(),
+          itemIds: Array.isArray(gig.itemIds) ? gig.itemIds.map(String) : []
+        })).filter((gig) => gig.name),
+        checklistState: data.checklistState && typeof data.checklistState === "object" ? data.checklistState : {}
+      };
+    }
+
+    async function compressPhotoSource(source) {
+      const image = await loadImage(source);
+      const scale = Math.min(1, photoMaxSize / Math.max(image.width, image.height));
+      const width = Math.max(1, Math.round(image.width * scale));
+      const height = Math.max(1, Math.round(image.height * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+      return canvas.toDataURL("image/webp", photoQuality);
+    }
+
+    function loadImage(source) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error("Não foi possível ler a imagem."));
+        image.src = source;
+      });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Não foi possível ler o ficheiro."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function readFileAsText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Não foi possível ler o ficheiro."));
+        reader.readAsText(file);
+      });
+    }
+
+    async function exportData() {
+      const items = await Promise.all(state.items.map(async (item) => {
+        if (!item.photo || item.photo.startsWith("data:image/webp")) return item;
+        try {
+          return { ...item, photo: await compressPhotoSource(item.photo) };
+        } catch {
+          return item;
+        }
+      }));
+      const json = JSON.stringify(makeExportData(items));
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 16).replace("T", "_").replace(":", "-");
+      link.href = url;
+      link.download = `Materialatuacoes_${date}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      toast("Dados exportados em JSON.");
+    }
+
+    async function importData(file) {
+      const text = await readFileAsText(file);
+      const imported = validateImportData(JSON.parse(text));
+      if (!confirm("Importar este ficheiro vai substituir os dados atuais desta app. Continuar?")) return;
+      state.items = imported.items;
+      state.gigs = imported.gigs;
+      checklistState = imported.checklistState;
+      saveState();
+      saveChecks();
+      resetGigForm();
+      renderAll();
+      toast("Dados importados.");
+    }
+
+    function escapeHtml(text = "") {
+      return String(text).replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function toast(message) {
+      const el = $("#toast");
+      el.textContent = message;
+      el.classList.add("show");
+      clearTimeout(toast.timer);
+      toast.timer = setTimeout(() => el.classList.remove("show"), 1900);
+    }
+
+    function paintIcons(root = document) {
+      root.querySelectorAll("[data-icon]").forEach((el) => {
+        el.innerHTML = icons[el.dataset.icon] || "";
+      });
+    }
+
+    function itemImage(item, small = false) {
+      if (item.photo) return `<img src="${item.photo}" alt="${escapeHtml(item.name)}">`;
+      return `<span class="${small ? "" : "icon"}" data-icon="image"></span>`;
+    }
+
+    function sortedItems() {
+      return [...state.items].sort((a, b) =>
+        `${a.category} ${a.name}`.localeCompare(`${b.category} ${b.name}`, "pt")
+      );
+    }
+
+    function categories() {
+      return [...new Set(state.items.map((item) => item.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt"));
+    }
+
+    function switchTab(name) {
+      $$(".tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === name));
+      $$("main section").forEach((section) => section.classList.toggle("active", section.id === name));
+      if (name === "today") renderToday();
+      if (name === "inventory") renderInventory();
+      if (name === "gigs") renderGigs();
+    }
+
+    function renderInventory() {
+      const query = $("#itemSearch").value.trim().toLowerCase();
+      const items = sortedItems().filter((item) => {
+        const haystack = `${item.name} ${item.category} ${item.notes}`.toLowerCase();
+        return haystack.includes(query);
+      });
+
+      $("#categoryList").innerHTML = categories().map((category) => `<option value="${escapeHtml(category)}"></option>`).join("");
+
+      $("#inventoryGrid").innerHTML = items.length ? items.map((item) => `
+        <article class="item-card">
+          <div class="item-menu">
+            <button class="menu-toggle" data-toggle-item-menu="${item.id}" aria-label="Opções de ${escapeHtml(item.name)}" aria-expanded="false"><span data-icon="more"></span></button>
+            <div class="menu-popover">
+              <button class="menu-action" data-edit-item="${item.id}"><span data-icon="edit"></span>Editar</button>
+              <button class="menu-action danger-text" data-delete-item="${item.id}"><span data-icon="trash"></span>Apagar</button>
+            </div>
+          </div>
+          <div class="photo">${itemImage(item)}</div>
+          <div class="item-body">
+            <div class="item-title">
+              <h3>${escapeHtml(item.name)}</h3>
+              <span class="pill">${escapeHtml(item.category || "Sem categoria")}</span>
+            </div>
+            ${item.notes ? `<p class="notes">${escapeHtml(item.notes)}</p>` : ""}
+          </div>
+        </article>
+      `).join("") : `<div class="empty">Ainda não há material com esses filtros.</div>`;
+
+      paintIcons($("#inventoryGrid"));
+    }
+
+    function openItemForm(itemId = "") {
+      const item = state.items.find((entry) => entry.id === itemId);
+      $("#itemFormTitle").textContent = item ? "Editar material" : "Novo material";
+      $("#itemId").value = item?.id || "";
+      $("#itemName").value = item?.name || "";
+      $("#itemCategory").value = item?.category || "";
+      $("#itemNotes").value = item?.notes || "";
+      pendingPhoto = item?.photo || "";
+      $("#itemPhoto").value = "";
+      updatePhotoPreview();
+      $("#itemDialog").showModal();
+      $("#itemName").focus();
+    }
+
+    function updatePhotoPreview() {
+      const preview = $("#photoPreview");
+      preview.src = pendingPhoto || "";
+      preview.style.visibility = pendingPhoto ? "visible" : "hidden";
+    }
+
+    function deleteItem(itemId) {
+      const item = state.items.find((entry) => entry.id === itemId);
+      if (!item || !confirm(`Apagar "${item.name}"? Também sai dos modelos de atuação.`)) return;
+      state.items = state.items.filter((entry) => entry.id !== itemId);
+      state.gigs = state.gigs.map((gig) => ({
+        ...gig,
+        itemIds: gig.itemIds.filter((id) => id !== itemId)
+      }));
+      saveState();
+      renderAll();
+      toast("Material apagado.");
+    }
+
+    function renderGigs() {
+      $("#gigList").innerHTML = state.gigs.length ? state.gigs.map((gig) => {
+        const count = gig.itemIds.filter((id) => state.items.some((item) => item.id === id)).length;
+        return `
+          <article class="gig-card">
+            <div class="gig-body">
+              <div class="gig-title">
+                <h3>${escapeHtml(gig.name)}</h3>
+                <span class="pill">${count} itens</span>
+              </div>
+              ${gig.notes ? `<p class="notes">${escapeHtml(gig.notes)}</p>` : ""}
+              <div class="card-actions">
+                <button class="primary action" data-start-gig="${gig.id}"><span data-icon="check-square"></span>Usar hoje</button>
+                <button class="secondary action" data-edit-gig="${gig.id}"><span data-icon="edit"></span>Editar</button>
+                <button class="danger action" data-delete-gig="${gig.id}"><span data-icon="trash"></span>Apagar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("") : `<div class="empty">Cria o primeiro tipo de atuação e escolhe o material que costumas levar.</div>`;
+
+      renderGigPicker();
+      paintIcons($("#gigs"));
+    }
+
+    function renderGigPicker(selectedIds = getSelectedGigItems()) {
+      const items = sortedItems();
+      $("#gigItemPicker").innerHTML = items.length ? items.map((item) => `
+        <label class="pick-row">
+          <input type="checkbox" value="${item.id}" ${selectedIds.includes(item.id) ? "checked" : ""}>
+          <span class="mini-photo">${itemImage(item, true)}</span>
+          <span class="row-name">
+            <strong>${escapeHtml(item.name)}</strong>
+            <small>${escapeHtml(item.category || "Sem categoria")}</small>
+          </span>
+          <span class="pill">${escapeHtml(item.category || "Material")}</span>
+        </label>
+      `).join("") : `<div class="empty">Adiciona material primeiro para o poderes selecionar nas atuações.</div>`;
+      paintIcons($("#gigItemPicker"));
+    }
+
+    function getSelectedGigItems() {
+      return $$("#gigItemPicker input:checked").map((input) => input.value);
+    }
+
+    function resetGigForm() {
+      $("#gigFormTitle").textContent = "Criar atuação";
+      $("#gigId").value = "";
+      $("#gigName").value = "";
+      $("#gigNotes").value = "";
+      renderGigPicker([]);
+    }
+
+    function editGig(gigId) {
+      const gig = state.gigs.find((entry) => entry.id === gigId);
+      if (!gig) return;
+      $("#gigFormTitle").textContent = "Editar atuação";
+      $("#gigId").value = gig.id;
+      $("#gigName").value = gig.name;
+      $("#gigNotes").value = gig.notes || "";
+      renderGigPicker(gig.itemIds || []);
+      $("#gigName").focus();
+    }
+
+    function deleteGig(gigId) {
+      const gig = state.gigs.find((entry) => entry.id === gigId);
+      if (!gig || !confirm(`Apagar a atuação "${gig.name}"?`)) return;
+      state.gigs = state.gigs.filter((entry) => entry.id !== gigId);
+      delete checklistState[gigId];
+      saveState();
+      saveChecks();
+      resetGigForm();
+      renderAll();
+      toast("Atuação apagada.");
+    }
+
+    function renderToday() {
+      const select = $("#todayGig");
+      const previous = select.value;
+      select.innerHTML = state.gigs.length
+        ? state.gigs.map((gig) => `<option value="${gig.id}">${escapeHtml(gig.name)}</option>`).join("")
+        : `<option value="">Sem atuações criadas</option>`;
+      if (state.gigs.some((gig) => gig.id === previous)) select.value = previous;
+
+      const gig = state.gigs.find((entry) => entry.id === select.value) || state.gigs[0];
+      if (gig) select.value = gig.id;
+
+      if (!gig) {
+        $("#todayContent").innerHTML = `<div class="empty">Cria uma atuação, por exemplo Kiay ou Casamento, e depois a lista aparece aqui.</div>`;
+        return;
+      }
+
+      const gigItems = gig.itemIds
+        .map((id) => state.items.find((item) => item.id === id))
+        .filter(Boolean)
+        .sort((a, b) => `${a.category} ${a.name}`.localeCompare(`${b.category} ${b.name}`, "pt"));
+
+      const checked = checklistState[gig.id] || [];
+      const done = gigItems.filter((item) => checked.includes(item.id)).length;
+      const total = gigItems.length;
+      const pct = total ? Math.round((done / total) * 100) : 0;
+
+      $("#todayContent").innerHTML = `
+        <div class="check-header">
+          <div>
+            <h3>${escapeHtml(gig.name)}</h3>
+            <div class="meta">
+              <span>${done}/${total} marcados</span>
+              ${gig.notes ? `<span>${escapeHtml(gig.notes)}</span>` : ""}
+            </div>
+          </div>
+          <span class="pill">${pct}% pronto</span>
+        </div>
+        <div class="progress" aria-label="Progresso"><span style="width:${pct}%"></span></div>
+        <div class="checklist" style="margin-top:14px">
+          ${gigItems.length ? gigItems.map((item) => {
+            const isPacked = checked.includes(item.id);
+            return `
+              <label class="check-row ${isPacked ? "packed" : ""}">
+                <input type="checkbox" data-check-item="${item.id}" ${isPacked ? "checked" : ""}>
+                <span class="mini-photo">${itemImage(item, true)}</span>
+                <span class="row-name">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <small>${escapeHtml(item.category || "Sem categoria")}${item.notes ? ` · ${escapeHtml(item.notes)}` : ""}</small>
+                </span>
+              </label>
+            `;
+          }).join("") : `<div class="empty">Esta atuação ainda não tem material selecionado.</div>`}
+        </div>
+      `;
+
+      paintIcons($("#todayContent"));
+    }
+
+    function renderAll() {
+      renderInventory();
+      renderGigs();
+      renderToday();
+    }
+
+    $$(".tab").forEach((tab) => tab.addEventListener("click", () => switchTab(tab.dataset.tab)));
+
+    $("#newItem").addEventListener("click", () => openItemForm());
+    $("#closeItem").addEventListener("click", () => $("#itemDialog").close());
+    $("#clearPhoto").addEventListener("click", () => {
+      pendingPhoto = "";
+      $("#itemPhoto").value = "";
+      updatePhotoPreview();
+    });
+
+    $("#itemSearch").addEventListener("input", renderInventory);
+
+    $("#exportData").addEventListener("click", () => {
+      exportData().catch(() => toast("Não foi possível exportar os dados."));
+    });
+
+    $("#importData").addEventListener("click", () => $("#importFile").click());
+    $("#importFile").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      importData(file)
+        .catch(() => toast("Não foi possível importar esse JSON."))
+        .finally(() => {
+          event.target.value = "";
+        });
+    });
+
+    $("#itemPhoto").addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      readFileAsDataUrl(file)
+        .then(compressPhotoSource)
+        .then((photo) => {
+          pendingPhoto = photo;
+          updatePhotoPreview();
+          toast("Foto comprimida e pronta.");
+        })
+        .catch(() => toast("Não foi possível preparar essa foto."));
+    });
+
+    $("#itemForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const id = $("#itemId").value || crypto.randomUUID();
+      const next = {
+        id,
+        name: $("#itemName").value.trim(),
+        category: $("#itemCategory").value.trim(),
+        notes: $("#itemNotes").value.trim(),
+        photo: pendingPhoto
+      };
+      if (!next.name) return;
+      const index = state.items.findIndex((item) => item.id === id);
+      if (index >= 0) state.items[index] = next;
+      else state.items.push(next);
+      saveState();
+      $("#itemDialog").close();
+      renderAll();
+      toast("Material guardado.");
+    });
+
+    document.addEventListener("click", (event) => {
+      const toggleItemMenuButton = event.target.closest("[data-toggle-item-menu]");
+      const editItemButton = event.target.closest("[data-edit-item]");
+      const deleteItemButton = event.target.closest("[data-delete-item]");
+      const editGigButton = event.target.closest("[data-edit-gig]");
+      const deleteGigButton = event.target.closest("[data-delete-gig]");
+      const startGigButton = event.target.closest("[data-start-gig]");
+      const activeMenu = event.target.closest(".item-menu");
+
+      if (toggleItemMenuButton) {
+        const menu = toggleItemMenuButton.closest(".item-menu");
+        const wasOpen = menu.classList.contains("open");
+        $$(".item-menu.open").forEach((entry) => {
+          entry.classList.remove("open");
+          entry.querySelector(".menu-toggle")?.setAttribute("aria-expanded", "false");
+        });
+        menu.classList.toggle("open", !wasOpen);
+        toggleItemMenuButton.setAttribute("aria-expanded", String(!wasOpen));
+        return;
+      }
+
+      if (editItemButton || deleteItemButton || !activeMenu) {
+        $$(".item-menu.open").forEach((entry) => {
+          entry.classList.remove("open");
+          entry.querySelector(".menu-toggle")?.setAttribute("aria-expanded", "false");
+        });
+      }
+      if (editItemButton) openItemForm(editItemButton.dataset.editItem);
+      if (deleteItemButton) deleteItem(deleteItemButton.dataset.deleteItem);
+      if (editGigButton) editGig(editGigButton.dataset.editGig);
+      if (deleteGigButton) deleteGig(deleteGigButton.dataset.deleteGig);
+      if (startGigButton) {
+        $("#todayGig").value = startGigButton.dataset.startGig;
+        switchTab("today");
+      }
+    });
+
+    $("#newGig").addEventListener("click", () => {
+      resetGigForm();
+      $("#gigName").focus();
+    });
+
+    $("#cancelGig").addEventListener("click", resetGigForm);
+
+    $("#gigForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const id = $("#gigId").value || crypto.randomUUID();
+      const next = {
+        id,
+        name: $("#gigName").value.trim(),
+        notes: $("#gigNotes").value.trim(),
+        itemIds: getSelectedGigItems()
+      };
+      if (!next.name) return;
+      const index = state.gigs.findIndex((gig) => gig.id === id);
+      if (index >= 0) state.gigs[index] = next;
+      else state.gigs.push(next);
+      saveState();
+      resetGigForm();
+      renderAll();
+      toast("Atuação guardada.");
+    });
+
+    $("#todayGig").addEventListener("change", renderToday);
+    $("#resetCheck").addEventListener("click", () => {
+      const gigId = $("#todayGig").value;
+      if (!gigId) return;
+      checklistState[gigId] = [];
+      saveChecks();
+      renderToday();
+    });
+
+    $("#todayContent").addEventListener("change", (event) => {
+      const checkbox = event.target.closest("[data-check-item]");
+      if (!checkbox) return;
+      const gigId = $("#todayGig").value;
+      const checked = new Set(checklistState[gigId] || []);
+      if (checkbox.checked) checked.add(checkbox.dataset.checkItem);
+      else checked.delete(checkbox.dataset.checkItem);
+      checklistState[gigId] = [...checked];
+      saveChecks();
+      renderToday();
+    });
+
+    paintIcons();
+    renderAll();
+  </script>
+</body>
+</html>
