@@ -429,6 +429,43 @@
       object-fit: cover;
     }
 
+    .photo-adjust {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .photo-adjust[hidden] {
+      display: none;
+    }
+
+    .photo-frame-preview {
+      width: min(360px, 100%);
+      aspect-ratio: 23 / 15;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #ece3d8;
+      overflow: hidden;
+    }
+
+    .photo-frame-preview img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .range-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
     .item-picker,
     .checklist {
       display: grid;
@@ -599,12 +636,18 @@
 
       header {
         grid-template-columns: 1fr;
+        align-items: stretch;
       }
 
       .tabs {
-        overflow-x: auto;
-        justify-content: start;
+        width: 100%;
+        justify-content: stretch;
         top: 8px;
+      }
+
+      .tab {
+        flex: 1 1 0;
+        justify-content: center;
       }
 
       .split {
@@ -621,12 +664,27 @@
     }
 
     @media (max-width: 520px) {
-      .tab span {
-        display: none;
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-radius: var(--radius);
       }
 
       .tab {
-        padding: 11px 13px;
+        gap: 5px;
+        min-width: 0;
+        padding: 10px 6px;
+        font-size: .86rem;
+      }
+
+      .tab .icon svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      header > .controls {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .toolbar {
@@ -643,6 +701,10 @@
       .pick-row,
       .check-row {
         grid-template-columns: auto 46px 1fr;
+      }
+
+      .range-grid {
+        grid-template-columns: 1fr;
       }
 
       .pick-row .pill {
@@ -765,7 +827,23 @@
           <label for="itemPhoto">Foto</label>
           <div class="file-row">
             <img id="photoPreview" class="thumb-preview" alt="">
-            <input id="itemPhoto" type="file" accept="image/*">
+            <input id="itemPhoto" type="file" accept="image/*,.heic,.heif">
+          </div>
+          <div id="photoAdjustPanel" class="photo-adjust" hidden>
+            <label>Enquadramento da foto</label>
+            <div class="photo-frame-preview">
+              <img id="photoFramePreview" alt="">
+            </div>
+            <div class="range-grid">
+              <div class="field">
+                <label for="photoPositionX">Esquerda / Direita</label>
+                <input id="photoPositionX" type="range" min="0" max="100" value="50">
+              </div>
+              <div class="field">
+                <label for="photoPositionY">Cima / Baixo</label>
+                <input id="photoPositionY" type="range" min="0" max="100" value="50">
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -804,6 +882,7 @@
     const state = loadState();
     let checklistState = JSON.parse(localStorage.getItem(checkKey) || "{}");
     let pendingPhoto = "";
+    let pendingPhotoPosition = { x: 50, y: 50 };
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -811,10 +890,10 @@
     function seedData() {
       return {
         items: [
-          { id: crypto.randomUUID(), name: "Guitarra principal", category: "Guitarras", notes: "Instrumento base para atuações acústicas.", photo: "" },
-          { id: crypto.randomUUID(), name: "Saco de cabos", category: "Sacos", notes: "XLR, jack, extensões e adaptadores.", photo: "" },
-          { id: crypto.randomUUID(), name: "Tripé de microfone", category: "Tripés", notes: "Confirmar aperto antes de sair.", photo: "" },
-          { id: crypto.randomUUID(), name: "Luz ambiente", category: "Luzes", notes: "Carregador na bolsa lateral.", photo: "" }
+          { id: crypto.randomUUID(), name: "Guitarra principal", category: "Guitarras", notes: "Instrumento base para atuações acústicas.", photo: "", photoPosition: { x: 50, y: 50 } },
+          { id: crypto.randomUUID(), name: "Saco de cabos", category: "Sacos", notes: "XLR, jack, extensões e adaptadores.", photo: "", photoPosition: { x: 50, y: 50 } },
+          { id: crypto.randomUUID(), name: "Tripé de microfone", category: "Tripés", notes: "Confirmar aperto antes de sair.", photo: "", photoPosition: { x: 50, y: 50 } },
+          { id: crypto.randomUUID(), name: "Luz ambiente", category: "Luzes", notes: "Carregador na bolsa lateral.", photo: "", photoPosition: { x: 50, y: 50 } }
         ],
         gigs: []
       };
@@ -866,7 +945,8 @@
           name: String(item.name || "").trim(),
           category: String(item.category || "").trim(),
           notes: String(item.notes || "").trim(),
-          photo: typeof item.photo === "string" && item.photo.startsWith("data:image/") ? item.photo : ""
+          photo: typeof item.photo === "string" && item.photo.startsWith("data:image/") ? item.photo : "",
+          photoPosition: normalizePhotoPosition(item.photoPosition)
         })).filter((item) => item.name),
         gigs: data.gigs.map((gig) => ({
           id: String(gig.id || crypto.randomUUID()),
@@ -979,8 +1059,21 @@
       });
     }
 
+    function normalizePhotoPosition(position = {}) {
+      const clamp = (value) => Math.max(0, Math.min(100, Number.isFinite(value) ? value : 50));
+      return {
+        x: clamp(Number(position.x)),
+        y: clamp(Number(position.y))
+      };
+    }
+
+    function photoPositionAttribute(item) {
+      const position = normalizePhotoPosition(item.photoPosition);
+      return `style="object-position:${position.x}% ${position.y}%"`;
+    }
+
     function itemImage(item, small = false) {
-      if (item.photo) return `<img src="${item.photo}" alt="${escapeHtml(item.name)}">`;
+      if (item.photo) return `<img src="${item.photo}" ${photoPositionAttribute(item)} alt="${escapeHtml(item.name)}">`;
       return `<span class="${small ? "" : "icon"}" data-icon="image"></span>`;
     }
 
@@ -1042,6 +1135,7 @@
       $("#itemCategory").value = item?.category || "";
       $("#itemNotes").value = item?.notes || "";
       pendingPhoto = item?.photo || "";
+      pendingPhotoPosition = normalizePhotoPosition(item?.photoPosition);
       $("#itemPhoto").value = "";
       updatePhotoPreview();
       $("#itemDialog").showModal();
@@ -1050,8 +1144,17 @@
 
     function updatePhotoPreview() {
       const preview = $("#photoPreview");
+      const framePreview = $("#photoFramePreview");
+      const panel = $("#photoAdjustPanel");
+      const position = `${pendingPhotoPosition.x}% ${pendingPhotoPosition.y}%`;
       preview.src = pendingPhoto || "";
+      preview.style.objectPosition = position;
       preview.style.visibility = pendingPhoto ? "visible" : "hidden";
+      framePreview.src = pendingPhoto || "";
+      framePreview.style.objectPosition = position;
+      panel.hidden = !pendingPhoto;
+      $("#photoPositionX").value = pendingPhotoPosition.x;
+      $("#photoPositionY").value = pendingPhotoPosition.y;
     }
 
     function deleteItem(itemId) {
@@ -1213,6 +1316,7 @@
     $("#closeItem").addEventListener("click", () => $("#itemDialog").close());
     $("#clearPhoto").addEventListener("click", () => {
       pendingPhoto = "";
+      pendingPhotoPosition = { x: 50, y: 50 };
       $("#itemPhoto").value = "";
       updatePhotoPreview();
     });
@@ -1241,10 +1345,21 @@
         .then(compressPhotoSource)
         .then((photo) => {
           pendingPhoto = photo;
+          pendingPhotoPosition = { x: 50, y: 50 };
           updatePhotoPreview();
           toast("Foto comprimida e pronta.");
         })
-        .catch(() => toast("Não foi possível preparar essa foto."));
+        .catch(() => toast("Não foi possível abrir essa foto. Se for HEIC/HEIF, tenta JPEG ou PNG."));
+    });
+
+    $("#photoPositionX").addEventListener("input", (event) => {
+      pendingPhotoPosition.x = Number(event.target.value);
+      updatePhotoPreview();
+    });
+
+    $("#photoPositionY").addEventListener("input", (event) => {
+      pendingPhotoPosition.y = Number(event.target.value);
+      updatePhotoPreview();
     });
 
     $("#itemForm").addEventListener("submit", (event) => {
@@ -1255,7 +1370,8 @@
         name: $("#itemName").value.trim(),
         category: $("#itemCategory").value.trim(),
         notes: $("#itemNotes").value.trim(),
-        photo: pendingPhoto
+        photo: pendingPhoto,
+        photoPosition: normalizePhotoPosition(pendingPhotoPosition)
       };
       if (!next.name) return;
       const index = state.items.findIndex((item) => item.id === id);
