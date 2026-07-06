@@ -47,6 +47,11 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      cursor: wait;
+      opacity: .58;
+    }
+
     .app {
       max-width: 1180px;
       margin: 0 auto;
@@ -429,6 +434,13 @@
       object-fit: cover;
     }
 
+    .photo-status {
+      margin: 0;
+      min-height: 18px;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
     .photo-adjust {
       display: grid;
       gap: 10px;
@@ -803,7 +815,7 @@
   </div>
 
   <dialog id="itemDialog">
-    <form method="dialog" class="dialog-inner" id="itemForm">
+      <form class="dialog-inner" id="itemForm">
       <div class="dialog-title">
         <h3 id="itemFormTitle">Novo material</h3>
         <button class="ghost" value="cancel" type="button" id="closeItem" title="Fechar"><span class="icon" data-icon="x"></span></button>
@@ -829,6 +841,7 @@
             <img id="photoPreview" class="thumb-preview" alt="">
             <input id="itemPhoto" type="file" accept="image/*,.heic,.heif">
           </div>
+          <p id="photoStatus" class="photo-status"></p>
           <div id="photoAdjustPanel" class="photo-adjust" hidden>
             <label>Enquadramento da foto</label>
             <div class="photo-frame-preview">
@@ -848,7 +861,7 @@
         </div>
       </div>
       <div class="controls">
-        <button class="primary" type="submit"><span class="icon" data-icon="save"></span>Guardar</button>
+        <button class="primary" type="submit" id="saveItem"><span class="icon" data-icon="save"></span>Guardar</button>
         <button class="secondary" value="cancel" type="button" id="clearPhoto"><span class="icon" data-icon="image-off"></span>Sem foto</button>
       </div>
     </form>
@@ -877,12 +890,13 @@
     const storeKey = "material-atuacoes-v1";
     const checkKey = "material-atuacoes-checks-v1";
     const exportVersion = 1;
-    const photoMaxSize = 720;
-    const photoQuality = 0.72;
+    const photoMaxSize = 560;
+    const photoQuality = 0.64;
     const state = loadState();
     let checklistState = JSON.parse(localStorage.getItem(checkKey) || "{}");
     let pendingPhoto = "";
     let pendingPhotoPosition = { x: 50, y: 50 };
+    let photoProcessing = false;
 
     const $ = (selector) => document.querySelector(selector);
     const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -914,11 +928,23 @@
     }
 
     function saveState() {
-      localStorage.setItem(storeKey, JSON.stringify(state));
+      try {
+        localStorage.setItem(storeKey, JSON.stringify(state));
+        return true;
+      } catch {
+        toast("Não foi possível guardar. A foto pode ser demasiado grande.");
+        return false;
+      }
     }
 
     function saveChecks() {
-      localStorage.setItem(checkKey, JSON.stringify(checklistState));
+      try {
+        localStorage.setItem(checkKey, JSON.stringify(checklistState));
+        return true;
+      } catch {
+        toast("Não foi possível guardar os vistos.");
+        return false;
+      }
     }
 
     function makeExportData(items = state.items) {
@@ -968,7 +994,34 @@
       canvas.height = height;
       const context = canvas.getContext("2d");
       context.drawImage(image, 0, 0, width, height);
-      return canvas.toDataURL("image/webp", photoQuality);
+      return canvasToDataUrl(canvas);
+    }
+
+    async function canvasToDataUrl(canvas) {
+      const webp = await canvasToBlob(canvas, "image/webp", photoQuality);
+      if (webp && webp.type === "image/webp") return blobToDataUrl(webp);
+      const jpeg = await canvasToBlob(canvas, "image/jpeg", photoQuality);
+      if (jpeg) return blobToDataUrl(jpeg);
+      return canvas.toDataURL("image/jpeg", photoQuality);
+    }
+
+    function canvasToBlob(canvas, type, quality) {
+      return new Promise((resolve) => {
+        if (!canvas.toBlob) {
+          resolve(null);
+          return;
+        }
+        canvas.toBlob(resolve, type, quality);
+      });
+    }
+
+    function blobToDataUrl(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Não foi possível converter a foto."));
+        reader.readAsDataURL(blob);
+      });
     }
 
     function loadImage(source) {
@@ -1137,6 +1190,7 @@
       pendingPhoto = item?.photo || "";
       pendingPhotoPosition = normalizePhotoPosition(item?.photoPosition);
       $("#itemPhoto").value = "";
+      setPhotoProcessing(false, "");
       updatePhotoPreview();
       $("#itemDialog").showModal();
       $("#itemName").focus();
@@ -1155,6 +1209,12 @@
       panel.hidden = !pendingPhoto;
       $("#photoPositionX").value = pendingPhotoPosition.x;
       $("#photoPositionY").value = pendingPhotoPosition.y;
+    }
+
+    function setPhotoProcessing(isProcessing, message = "") {
+      photoProcessing = isProcessing;
+      $("#saveItem").disabled = isProcessing;
+      $("#photoStatus").textContent = message;
     }
 
     function deleteItem(itemId) {
@@ -1317,6 +1377,7 @@
     $("#clearPhoto").addEventListener("click", () => {
       pendingPhoto = "";
       pendingPhotoPosition = { x: 50, y: 50 };
+      setPhotoProcessing(false, "");
       $("#itemPhoto").value = "";
       updatePhotoPreview();
     });
@@ -1341,15 +1402,20 @@
     $("#itemPhoto").addEventListener("change", (event) => {
       const file = event.target.files[0];
       if (!file) return;
+      setPhotoProcessing(true, "A preparar foto...");
       readFileAsDataUrl(file)
         .then(compressPhotoSource)
         .then((photo) => {
           pendingPhoto = photo;
           pendingPhotoPosition = { x: 50, y: 50 };
           updatePhotoPreview();
+          setPhotoProcessing(false, "Foto pronta para guardar.");
           toast("Foto comprimida e pronta.");
         })
-        .catch(() => toast("Não foi possível abrir essa foto. Se for HEIC/HEIF, tenta JPEG ou PNG."));
+        .catch(() => {
+          setPhotoProcessing(false, "Não foi possível abrir esta foto.");
+          toast("Não foi possível abrir essa foto. Se for HEIC/HEIF, tenta JPEG ou PNG.");
+        });
     });
 
     $("#photoPositionX").addEventListener("input", (event) => {
@@ -1364,6 +1430,10 @@
 
     $("#itemForm").addEventListener("submit", (event) => {
       event.preventDefault();
+      if (photoProcessing) {
+        toast("Espera a foto acabar de preparar.");
+        return;
+      }
       const id = $("#itemId").value || crypto.randomUUID();
       const next = {
         id,
@@ -1377,7 +1447,7 @@
       const index = state.items.findIndex((item) => item.id === id);
       if (index >= 0) state.items[index] = next;
       else state.items.push(next);
-      saveState();
+      if (!saveState()) return;
       $("#itemDialog").close();
       renderAll();
       toast("Material guardado.");
